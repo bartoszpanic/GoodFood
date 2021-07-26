@@ -13,12 +13,50 @@ namespace GoodFood.Services
     {
         private readonly ApplicationDbContext _db;
         private readonly IMapper _mapper;
-        private readonly IRestaurantService _service;
         public RestaurantService(ApplicationDbContext db, IMapper mapper)
         {
             _db = db;
             _mapper = mapper;
         }
+
+
+        public bool Update(int id,UpdateRestaurantDto dto)
+        {
+            var restaurant = _db
+                .Restaurants
+                .FirstOrDefault(r => r.Id == id);
+
+            if (restaurant == null)
+            {
+                return false;
+            }
+
+            restaurant.Name = dto.Name;
+            restaurant.Description = dto.Description;
+            restaurant.HasDelivery = dto.HasDelivery;
+
+            _db.SaveChanges();
+
+            return true;
+        }
+
+
+        public bool Delete(int id)
+        {
+            var restaurant = _db
+                .Restaurants
+                .FirstOrDefault(r => r.Id == id);
+
+            if (restaurant == null)
+            {
+                return false;
+            }
+
+            _db.Restaurants.Remove(restaurant);
+            _db.SaveChanges();
+            return true;
+        }
+
 
         public RestaurantDto GetById(int id)
         {
