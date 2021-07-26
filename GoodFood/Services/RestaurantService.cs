@@ -2,6 +2,7 @@
 using GoodFood.Entities;
 using GoodFood.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,10 +14,12 @@ namespace GoodFood.Services
     {
         private readonly ApplicationDbContext _db;
         private readonly IMapper _mapper;
-        public RestaurantService(ApplicationDbContext db, IMapper mapper)
+        private readonly ILogger _logger;
+        public RestaurantService(ApplicationDbContext db, IMapper mapper, ILogger<RestaurantService> logger)
         {
             _db = db;
             _mapper = mapper;
+            _logger = logger;
         }
 
 
@@ -43,6 +46,8 @@ namespace GoodFood.Services
 
         public bool Delete(int id)
         {
+            _logger.LogError($"Restaurant with id : {id}, DELETE action invoked");
+
             var restaurant = _db
                 .Restaurants
                 .FirstOrDefault(r => r.Id == id);
