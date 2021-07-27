@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using GoodFood.Entities;
+using GoodFood.Exceptions;
 using GoodFood.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -23,7 +24,7 @@ namespace GoodFood.Services
         }
 
 
-        public bool Update(int id,UpdateRestaurantDto dto)
+        public void Update(int id,UpdateRestaurantDto dto)
         {
             var restaurant = _db
                 .Restaurants
@@ -31,7 +32,7 @@ namespace GoodFood.Services
 
             if (restaurant == null)
             {
-                return false;
+                throw new NotFoundException("Restaurant not found");
             }
 
             restaurant.Name = dto.Name;
@@ -39,12 +40,10 @@ namespace GoodFood.Services
             restaurant.HasDelivery = dto.HasDelivery;
 
             _db.SaveChanges();
-
-            return true;
         }
 
 
-        public bool Delete(int id)
+        public void Delete(int id)
         {
             _logger.LogError($"Restaurant with id : {id}, DELETE action invoked");
 
@@ -54,12 +53,11 @@ namespace GoodFood.Services
 
             if (restaurant == null)
             {
-                return false;
+                throw new NotFoundException("Restaurant not found");
             }
 
             _db.Restaurants.Remove(restaurant);
             _db.SaveChanges();
-            return true;
         }
 
 
@@ -71,7 +69,10 @@ namespace GoodFood.Services
                 .Include(r => r.Dishes)
                 .FirstOrDefault(r => r.Id == id);
 
-            if(restaurant is null) return null;
+            if(restaurant is null)
+            {
+                throw new NotFoundException("Restaurant not found");
+            }
 
             var result = _mapper.Map<RestaurantDto>(restaurant);
 

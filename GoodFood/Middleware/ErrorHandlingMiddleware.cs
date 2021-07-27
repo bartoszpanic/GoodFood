@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using GoodFood.Exceptions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,11 @@ namespace GoodFood.Middleware
             try
             {
                await next.Invoke(context);
+            }
+            catch (NotFoundException notFoundEx)
+            {
+                context.Response.StatusCode = 404;
+                await context.Response.WriteAsync(notFoundEx.Message);
             }
             catch (Exception e)
             {
