@@ -1,4 +1,5 @@
 using GoodFood.Entities;
+using GoodFood.Middleware;
 using GoodFood.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -35,6 +36,8 @@ namespace GoodFood
 
             services.AddScoped<IRestaurantService, RestaurantService>();
 
+            services.AddScoped<ErrorHandlingMiddleware>();
+
             services.AddAutoMapper(this.GetType().Assembly);
         }
 
@@ -48,6 +51,7 @@ namespace GoodFood
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseMiddleware<ErrorHandlingMiddleware>();
             app.UseHttpsRedirection();
 
             app.UseRouting();
