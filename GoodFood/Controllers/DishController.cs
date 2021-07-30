@@ -18,6 +18,21 @@ namespace GoodFood.Controllers
             _dishService = dishService;
         }
 
+        [HttpDelete("{dishId}")]
+        public ActionResult Delete([FromRoute] int restaurantId, [FromRoute] int dishId)
+        {
+            _dishService.Remove(restaurantId, dishId);
+            return NoContent();
+        }
+
+        [HttpDelete]
+        public ActionResult DeleteAll([FromRoute] int restaurantId)
+        {
+            _dishService.RemoveAll(restaurantId);
+
+            return NoContent();
+        }
+
         [HttpPut("{dishId}")]
         public ActionResult Update([FromRoute] int restaurantId, [FromRoute] int dishId, [FromBody] UpdateDishDto dto)
         {

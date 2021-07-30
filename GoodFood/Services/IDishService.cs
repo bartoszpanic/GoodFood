@@ -12,5 +12,8 @@ namespace GoodFood.Services
         DishDto GetById(int restaurantId, int dishId);
         List<DishDto> GetAll(int restaurantId);
         void Update(int restaurantId, int dishId, UpdateDishDto dto);
+        void RemoveAll(int restaurantId);
+        void Remove(int restaurantId, int dishId);
+
     }
 }
