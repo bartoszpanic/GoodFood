@@ -17,6 +17,15 @@ namespace GoodFood.Controllers
         {
             _dishService = dishService;
         }
+
+        [HttpPut("{dishId}")]
+        public ActionResult Update([FromRoute] int restaurantId, [FromRoute] int dishId, [FromBody] UpdateDishDto dto)
+        {
+            _dishService.Update(restaurantId, dishId, dto);
+
+            return Ok();
+        }
+
         [HttpPost]
         public ActionResult Post([FromRoute] int restaurantId,[FromBody] CreateDishDto dto)
         {
