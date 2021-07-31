@@ -1,5 +1,9 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using GoodFood.Entities;
 using GoodFood.Middleware;
+using GoodFood.Models;
+using GoodFood.Models.Validators;
 using GoodFood.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -29,7 +33,7 @@ namespace GoodFood
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers().AddFluentValidation();
 
             services.AddDbContext<ApplicationDbContext>();
 
@@ -44,6 +48,8 @@ namespace GoodFood
             services.AddAutoMapper(this.GetType().Assembly);
 
             services.AddSwaggerGen();
+
+            services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
 
             services.AddScoped <RequestTimeMiddleware>();
 
