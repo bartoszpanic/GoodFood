@@ -4,6 +4,7 @@ using GoodFood.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,6 +38,8 @@ namespace GoodFood
             services.AddScoped<IRestaurantService, RestaurantService>();
 
             services.AddScoped<ErrorHandlingMiddleware>();
+
+            services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
             services.AddAutoMapper(this.GetType().Assembly);
 
