@@ -39,6 +39,8 @@ namespace GoodFood
 
             Configuration.GetSection("Authentication").Bind(autheticationSettings);
 
+            services.AddSingleton(autheticationSettings);
+
             services.AddAuthentication(option =>
             {
                 option.DefaultAuthenticateScheme = "Bearer";
