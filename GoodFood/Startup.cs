@@ -1,10 +1,12 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using GoodFood.Authorization;
 using GoodFood.Entities;
 using GoodFood.Middleware;
 using GoodFood.Models;
 using GoodFood.Models.Validators;
 using GoodFood.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -57,6 +59,14 @@ namespace GoodFood
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(autheticationSettings.JwtKey))
                 };
             });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("HasNationality", builder => builder.RequireClaim("Nationality"));
+                options.AddPolicy("AtLeast20", builder => builder.AddRequirements(new MinimumAgeRequirement(20)));
+            });
+
+            services.AddScoped<IAuthorizationHandler, MinimumAgeRequirementHandler>();
 
             services.AddControllers().AddFluentValidation();
 

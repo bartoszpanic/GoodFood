@@ -60,6 +60,7 @@ namespace GoodFood.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Policy = "AtLeast20")]
         public ActionResult<RestaurantDto> Get([FromRoute] int id)
         {
             var restaurant = _restaurantService.GetById(id);
