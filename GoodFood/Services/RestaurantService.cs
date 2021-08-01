@@ -24,11 +24,11 @@ namespace GoodFood.Services
         }
 
 
-        public void Update(int id,UpdateRestaurantDto dto)
+        public async Task UpdateAsync(int id,UpdateRestaurantDto dto)
         {
-            var restaurant = _db
+            var restaurant = await _db
                 .Restaurants
-                .FirstOrDefault(r => r.Id == id);
+                .FirstOrDefaultAsync(r => r.Id == id);
 
             if (restaurant == null)
             {
@@ -43,7 +43,7 @@ namespace GoodFood.Services
         }
 
 
-        public void Delete(int id)
+        public void DeleteAsync(int id)
         {
             _logger.LogError($"Restaurant with id : {id}, DELETE action invoked");
 

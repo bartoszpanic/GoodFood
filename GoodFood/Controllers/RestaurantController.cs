@@ -24,18 +24,18 @@ namespace GoodFood.Controllers
 
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin,Manager")]
-        public ActionResult Update([FromBody] UpdateRestaurantDto dto, [FromRoute] int id)
+        public async Task<ActionResult> UpdateAsync([FromBody] UpdateRestaurantDto dto, [FromRoute] int id)
         {
-            _restaurantService.Update(id, dto);
+            await _restaurantService.UpdateAsync(id, dto);
 
             return Ok();
         }
 
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin,Manager")]
-        public ActionResult Delete([FromRoute] int id)
+        public ActionResult DeleteAsync([FromRoute] int id)
         {
-            _restaurantService.Delete(id);
+            _restaurantService.DeleteAsync(id);
 
             return NotFound();
         }
