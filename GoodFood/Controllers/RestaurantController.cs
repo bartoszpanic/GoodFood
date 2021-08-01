@@ -1,6 +1,7 @@
 ﻿using GoodFood.Entities;
 using GoodFood.Models;
 using GoodFood.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ namespace GoodFood.Controllers
 {
     [Route("api/restaurant")]
     [ApiController]
+    [Authorize]
     public class RestaurantController : ControllerBase
     {
         private readonly IRestaurantService _restaurantService;
@@ -21,6 +23,7 @@ namespace GoodFood.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin,Manager")]
         public ActionResult Update([FromBody] UpdateRestaurantDto dto, [FromRoute] int id)
         {
             _restaurantService.Update(id, dto);
@@ -29,6 +32,7 @@ namespace GoodFood.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin,Manager")]
         public ActionResult Delete([FromRoute] int id)
         {
             _restaurantService.Delete(id);
@@ -38,6 +42,7 @@ namespace GoodFood.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Manager")]
         public ActionResult CreateRestaurant([FromBody] CreateRestaurantDto dto)
         {
             var id = _restaurantService.Create(dto);
@@ -46,6 +51,7 @@ namespace GoodFood.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public ActionResult<IEnumerable<RestaurantDto>> GetAll()
         {
             var restaurantDtos = _restaurantService.GetAll();

@@ -1,5 +1,6 @@
 ﻿using GoodFood.Models;
 using GoodFood.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ namespace GoodFood.Controllers
 {
     [Route("api/restaurant/{restaurantId}/dish")]
     [ApiController]
+    [Authorize]
     public class DishController : ControllerBase
     {
         private readonly IDishService _dishService;
@@ -19,6 +21,7 @@ namespace GoodFood.Controllers
         }
 
         [HttpDelete("{dishId}")]
+        [Authorize(Roles = "Admin,Manager")]
         public ActionResult Delete([FromRoute] int restaurantId, [FromRoute] int dishId)
         {
             _dishService.Remove(restaurantId, dishId);
@@ -26,6 +29,7 @@ namespace GoodFood.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = "Admin,Manager")]
         public ActionResult DeleteAll([FromRoute] int restaurantId)
         {
             _dishService.RemoveAll(restaurantId);
@@ -34,6 +38,7 @@ namespace GoodFood.Controllers
         }
 
         [HttpPut("{dishId}")]
+        [Authorize(Roles = "Admin,Manager")]
         public ActionResult Update([FromRoute] int restaurantId, [FromRoute] int dishId, [FromBody] UpdateDishDto dto)
         {
             _dishService.Update(restaurantId, dishId, dto);
@@ -42,6 +47,7 @@ namespace GoodFood.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Manager")]
         public ActionResult Post([FromRoute] int restaurantId,[FromBody] CreateDishDto dto)
         {
             var newDishId = _dishService.Create(restaurantId, dto);
@@ -58,6 +64,7 @@ namespace GoodFood.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public ActionResult<List<DishDto>> GetAll([FromRoute] int restaurantId)
         {
             var result = _dishService.GetAll(restaurantId);
