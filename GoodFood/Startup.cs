@@ -67,31 +67,18 @@ namespace GoodFood
             });
 
             services.AddScoped<IAuthorizationHandler, MinimumAgeRequirementHandler>();
-
             services.AddControllers().AddFluentValidation();
-
             services.AddDbContext<ApplicationDbContext>();
-
             services.AddScoped<RestaurantSeeder>();
-
             services.AddScoped<IRestaurantService, RestaurantService>();
-
             services.AddScoped<ErrorHandlingMiddleware>();
-
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
-
             services.AddAutoMapper(this.GetType().Assembly);
-
             services.AddSwaggerGen();
-
             services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
-
             services.AddScoped <RequestTimeMiddleware>();
-
             services.AddScoped<IDishService, DishService>();
-
             services.AddScoped<IAccountService, AccountService>();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -103,19 +90,17 @@ namespace GoodFood
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            
             app.UseMiddleware<ErrorHandlingMiddleware>();
             app.UseMiddleware<RequestTimeMiddleware>();
             app.UseAuthentication();
             app.UseHttpsRedirection();
-
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "GoodFood");
             });
-
 
             app.UseRouting();
             app.UseAuthorization();

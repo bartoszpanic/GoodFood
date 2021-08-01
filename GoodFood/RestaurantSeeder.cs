@@ -40,7 +40,7 @@ namespace GoodFood
                 new Restaurant()
                 {
                      Name = "KFC",
-                    Category = "Fast Food",
+                    Category = Enums.CategoryEnum.FastFood,
                     Description =
                         "KFC (short for Kentucky Fried Chicken) is an American fast food restaurant chain headquartered in Louisville, Kentucky, that specializes in fried chicken.",
                     ContactEmail = "contact@kfc.com",
@@ -69,7 +69,7 @@ namespace GoodFood
                 new Restaurant()
                 {
                     Name = "McDonald Szewska",
-                    Category = "Fast Food",
+                    Category = Enums.CategoryEnum.FastFood,
                     Description =
                         "McDonald's Corporation (McDonald's), incorporated on December 21, 1964, operates and franchises McDonald's restaurants.",
                     ContactEmail = "contact@mcdonald.com",
