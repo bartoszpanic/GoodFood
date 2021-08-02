@@ -33,42 +33,38 @@ namespace GoodFood.Controllers
 
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin,Manager")]
-        public ActionResult DeleteAsync([FromRoute] int id)
+        public async Task<ActionResult> DeleteAsync([FromRoute] int id)
         {
-            _restaurantService.DeleteAsync(id);
+            await _restaurantService.DeleteAsync(id);
 
             return NotFound();
         }
 
-
         [HttpPost]
         [Authorize(Roles = "Admin,Manager")]
-        public ActionResult CreateRestaurant([FromBody] CreateRestaurantDto dto)
+        public async Task<ActionResult> CreateRestaurant([FromBody] CreateRestaurantDto dto)
         {
-            var id = _restaurantService.Create(dto);
+            var id = await _restaurantService.CreateAsync(dto);
 
             return Created($"/api/restaurant/{id}", null);
         }
 
         [HttpGet]
         [AllowAnonymous]
-        public ActionResult<IEnumerable<RestaurantDto>> GetAll()
+        public async Task<ActionResult<IEnumerable<RestaurantDto>>> GetAll()
         {
-            var restaurantDtos = _restaurantService.GetAll();
+            var restaurantDtos = await _restaurantService.GetAllAsync();
 
             return Ok(restaurantDtos);
         }
 
         [HttpGet("{id}")]
         [Authorize(Policy = "AtLeast20")]
-        public ActionResult<RestaurantDto> Get([FromRoute] int id)
+        public async Task<ActionResult<RestaurantDto>> Get([FromRoute] int id)
         {
-            var restaurant = _restaurantService.GetById(id);
+            var restaurant = await _restaurantService.GetByIdAsync(id);
 
             return Ok(restaurant);
         }
-
-
     }
-
 }

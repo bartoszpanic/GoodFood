@@ -8,10 +8,10 @@ namespace GoodFood.Services
 {
     public interface IRestaurantService
     {
-        RestaurantDto GetById(int id);
-        IEnumerable<RestaurantDto> GetAll();
-        int Create(CreateRestaurantDto dto);
-        void DeleteAsync(int id);
+        Task<RestaurantDto> GetByIdAsync(int id);
+        Task<IEnumerable<RestaurantDto>> GetAllAsync();
+        Task<int> CreateAsync(CreateRestaurantDto dto);
+        Task DeleteAsync(int id);
         Task UpdateAsync(int id, UpdateRestaurantDto dto);
     }
 }

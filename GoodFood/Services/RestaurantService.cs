@@ -23,7 +23,6 @@ namespace GoodFood.Services
             _logger = logger;
         }
 
-
         public async Task UpdateAsync(int id,UpdateRestaurantDto dto)
         {
             var restaurant = await _db
@@ -39,17 +38,16 @@ namespace GoodFood.Services
             restaurant.Description = dto.Description;
             restaurant.HasDelivery = dto.HasDelivery;
 
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
         }
 
-
-        public void DeleteAsync(int id)
+        public async Task DeleteAsync(int id)
         {
             _logger.LogError($"Restaurant with id : {id}, DELETE action invoked");
 
-            var restaurant = _db
+            var restaurant = await _db
                 .Restaurants
-                .FirstOrDefault(r => r.Id == id);
+                .FirstOrDefaultAsync(r => r.Id == id);
 
             if (restaurant == null)
             {
@@ -57,17 +55,16 @@ namespace GoodFood.Services
             }
 
             _db.Restaurants.Remove(restaurant);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
         }
 
-
-        public RestaurantDto GetById(int id)
+        public async Task<RestaurantDto> GetByIdAsync(int id)
         {
-            var restaurant = _db
+            var restaurant = await _db
                 .Restaurants
                 .Include(r => r.Address)
                 .Include(r => r.Dishes)
-                .FirstOrDefault(r => r.Id == id);
+                .FirstOrDefaultAsync(r => r.Id == id);
 
             if(restaurant is null)
             {
@@ -79,24 +76,24 @@ namespace GoodFood.Services
             return result;
         }
 
-        public IEnumerable<RestaurantDto> GetAll()
+        public async Task<IEnumerable<RestaurantDto>> GetAllAsync()
         {
-            var restaurants = _db
+            var restaurants = await _db
                 .Restaurants
                 .Include(r => r.Address)
                 .Include(r => r.Dishes)
-                .ToList();
+                .ToListAsync();
 
             var restaurantsDtos = _mapper.Map<List<RestaurantDto>>(restaurants);
 
             return restaurantsDtos;
         }
 
-        public int Create(CreateRestaurantDto dto)
+        public async Task<int> CreateAsync(CreateRestaurantDto dto)
         {
             var restaurant = _mapper.Map<Restaurant>(dto);
-            _db.Restaurants.Add(restaurant);
-            _db.SaveChanges();
+            await _db.Restaurants.AddAsync(restaurant);
+            await _db.SaveChangesAsync();
 
             return restaurant.Id;
         }
