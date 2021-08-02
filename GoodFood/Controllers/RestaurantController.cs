@@ -59,7 +59,8 @@ namespace GoodFood.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Policy = "AtLeast20")]
+        [AllowAnonymous]
+        //[Authorize(Policy = "AtLeast20")]
         public async Task<ActionResult<RestaurantDto>> Get([FromRoute] int id)
         {
             var restaurant = await _restaurantService.GetByIdAsync(id);
