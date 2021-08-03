@@ -1,12 +1,15 @@
 ﻿using AutoMapper;
+using GoodFood.Authorization;
 using GoodFood.Entities;
 using GoodFood.Exceptions;
 using GoodFood.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace GoodFood.Services
@@ -16,14 +19,16 @@ namespace GoodFood.Services
         private readonly ApplicationDbContext _db;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
-        public RestaurantService(ApplicationDbContext db, IMapper mapper, ILogger<RestaurantService> logger)
+        private readonly IAuthorizationService _authorizationService;
+        public RestaurantService(ApplicationDbContext db, IMapper mapper, ILogger<RestaurantService> logger, IAuthorizationService authorizationService)
         {
             _db = db;
             _mapper = mapper;
             _logger = logger;
+            _authorizationService = authorizationService;
         }
 
-        public async Task UpdateAsync(int id,UpdateRestaurantDto dto)
+        public async Task UpdateAsync(int id,UpdateRestaurantDto dto, ClaimsPrincipal user)
         {
             var restaurant = await _db
                 .Restaurants
@@ -34,6 +39,14 @@ namespace GoodFood.Services
                 throw new NotFoundException("Restaurant not found");
             }
 
+            var authorizationResult = _authorizationService.AuthorizeAsync(user, restaurant,
+                new ResourceOperationRequirement(Operation.Update)).Result;
+
+            if (!authorizationResult.Succeeded)
+            {
+                throw new ForbidException();
+            }
+
             restaurant.Name = dto.Name;
             restaurant.Description = dto.Description;
             restaurant.HasDelivery = dto.HasDelivery;
@@ -41,7 +54,7 @@ namespace GoodFood.Services
             await _db.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id, ClaimsPrincipal user)
         {
             _logger.LogError($"Restaurant with id : {id}, DELETE action invoked");
 
@@ -52,6 +65,14 @@ namespace GoodFood.Services
             if (restaurant == null)
             {
                 throw new NotFoundException("Restaurant not found");
+            }
+
+            var authorizationResult = _authorizationService.AuthorizeAsync(user, restaurant,
+                new ResourceOperationRequirement(Operation.Delete)).Result;
+
+            if (!authorizationResult.Succeeded)
+            {
+                throw new ForbidException();
             }
 
             _db.Restaurants.Remove(restaurant);
@@ -89,9 +110,10 @@ namespace GoodFood.Services
             return restaurantsDtos;
         }
 
-        public async Task<int> CreateAsync(CreateRestaurantDto dto)
+        public async Task<int> CreateAsync(CreateRestaurantDto dto, int userId)
         {
             var restaurant = _mapper.Map<Restaurant>(dto);
+            restaurant.CreatedById = userId;
             await _db.Restaurants.AddAsync(restaurant);
             await _db.SaveChangesAsync();
 

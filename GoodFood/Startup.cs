@@ -67,6 +67,7 @@ namespace GoodFood
             });
 
             services.AddScoped<IAuthorizationHandler, MinimumAgeRequirementHandler>();
+            services.AddScoped<IAuthorizationHandler, ResourceOperationRequirementHandler>();
             services.AddControllers().AddFluentValidation();
             services.AddDbContext<ApplicationDbContext>();
             services.AddScoped<RestaurantSeeder>();

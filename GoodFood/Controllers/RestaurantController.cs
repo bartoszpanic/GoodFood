@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace GoodFood.Controllers
@@ -26,7 +27,7 @@ namespace GoodFood.Controllers
         [Authorize(Roles = "Admin,Manager")]
         public async Task<ActionResult> UpdateAsync([FromBody] UpdateRestaurantDto dto, [FromRoute] int id)
         {
-            await _restaurantService.UpdateAsync(id, dto);
+            await _restaurantService.UpdateAsync(id, dto, User);
 
             return Ok();
         }
@@ -35,7 +36,7 @@ namespace GoodFood.Controllers
         [Authorize(Roles = "Admin,Manager")]
         public async Task<ActionResult> DeleteAsync([FromRoute] int id)
         {
-            await _restaurantService.DeleteAsync(id);
+            await _restaurantService.DeleteAsync(id, User);
 
             return NotFound();
         }
@@ -44,7 +45,8 @@ namespace GoodFood.Controllers
         [Authorize(Roles = "Admin,Manager")]
         public async Task<ActionResult> CreateRestaurant([FromBody] CreateRestaurantDto dto)
         {
-            var id = await _restaurantService.CreateAsync(dto);
+            var userId = int.Parse(User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var id = await _restaurantService.CreateAsync(dto, userId);
 
             return Created($"/api/restaurant/{id}", null);
         }

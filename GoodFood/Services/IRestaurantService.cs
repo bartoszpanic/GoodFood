@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace GoodFood.Services
@@ -10,8 +11,8 @@ namespace GoodFood.Services
     {
         Task<RestaurantDto> GetByIdAsync(int id);
         Task<IEnumerable<RestaurantDto>> GetAllAsync();
-        Task<int> CreateAsync(CreateRestaurantDto dto);
-        Task DeleteAsync(int id);
-        Task UpdateAsync(int id, UpdateRestaurantDto dto);
+        Task<int> CreateAsync(CreateRestaurantDto dto, int userId);
+        Task DeleteAsync(int id, ClaimsPrincipal user);
+        Task UpdateAsync(int id, UpdateRestaurantDto dto, ClaimsPrincipal user);
     }
 }

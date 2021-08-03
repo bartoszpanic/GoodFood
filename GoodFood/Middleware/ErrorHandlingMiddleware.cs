@@ -21,6 +21,10 @@ namespace GoodFood.Middleware
             {
                await next.Invoke(context);
             }
+            catch (ForbidException forbidEx)
+            {
+                context.Response.StatusCode = 403;
+            }
             catch (BadRequestException badRequestEx)
             {
                 context.Response.StatusCode = 400;
