@@ -27,7 +27,7 @@ namespace GoodFood.Controllers
         [Authorize(Roles = "Admin,Manager")]
         public async Task<ActionResult> UpdateAsync([FromBody] UpdateRestaurantDto dto, [FromRoute] int id)
         {
-            await _restaurantService.UpdateAsync(id, dto, User);
+            await _restaurantService.UpdateAsync(id, dto);
 
             return Ok();
         }
@@ -36,17 +36,16 @@ namespace GoodFood.Controllers
         [Authorize(Roles = "Admin,Manager")]
         public async Task<ActionResult> DeleteAsync([FromRoute] int id)
         {
-            await _restaurantService.DeleteAsync(id, User);
+            await _restaurantService.DeleteAsync(id);
 
-            return NotFound();
+            return NoContent();
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin,Manager")]
         public async Task<ActionResult> CreateRestaurant([FromBody] CreateRestaurantDto dto)
         {
-            var userId = int.Parse(User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value);
-            var id = await _restaurantService.CreateAsync(dto, userId);
+            var id = await _restaurantService.CreateAsync(dto);
 
             return Created($"/api/restaurant/{id}", null);
         }

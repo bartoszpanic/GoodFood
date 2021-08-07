@@ -20,15 +20,18 @@ namespace GoodFood.Services
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
         private readonly IAuthorizationService _authorizationService;
-        public RestaurantService(ApplicationDbContext db, IMapper mapper, ILogger<RestaurantService> logger, IAuthorizationService authorizationService)
+        private readonly IUserContextService _userContextService;
+        public RestaurantService(ApplicationDbContext db, IMapper mapper, ILogger<RestaurantService> logger, IAuthorizationService authorizationService,
+            IUserContextService userContextService)
         {
             _db = db;
             _mapper = mapper;
             _logger = logger;
             _authorizationService = authorizationService;
+            _userContextService = userContextService;
         }
 
-        public async Task UpdateAsync(int id,UpdateRestaurantDto dto, ClaimsPrincipal user)
+        public async Task UpdateAsync(int id,UpdateRestaurantDto dto)
         {
             var restaurant = await _db
                 .Restaurants
@@ -39,7 +42,7 @@ namespace GoodFood.Services
                 throw new NotFoundException("Restaurant not found");
             }
 
-            var authorizationResult = _authorizationService.AuthorizeAsync(user, restaurant,
+            var authorizationResult = _authorizationService.AuthorizeAsync(_userContextService.User, restaurant,
                 new ResourceOperationRequirement(Operation.Update)).Result;
 
             if (!authorizationResult.Succeeded)
@@ -54,7 +57,7 @@ namespace GoodFood.Services
             await _db.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(int id, ClaimsPrincipal user)
+        public async Task DeleteAsync(int id)
         {
             _logger.LogError($"Restaurant with id : {id}, DELETE action invoked");
 
@@ -67,7 +70,7 @@ namespace GoodFood.Services
                 throw new NotFoundException("Restaurant not found");
             }
 
-            var authorizationResult = _authorizationService.AuthorizeAsync(user, restaurant,
+            var authorizationResult = _authorizationService.AuthorizeAsync(_userContextService.User, restaurant,
                 new ResourceOperationRequirement(Operation.Delete)).Result;
 
             if (!authorizationResult.Succeeded)
@@ -110,10 +113,10 @@ namespace GoodFood.Services
             return restaurantsDtos;
         }
 
-        public async Task<int> CreateAsync(CreateRestaurantDto dto, int userId)
+        public async Task<int> CreateAsync(CreateRestaurantDto dto)
         {
             var restaurant = _mapper.Map<Restaurant>(dto);
-            restaurant.CreatedById = userId;
+            restaurant.CreatedById = _userContextService.GetUserId;
             await _db.Restaurants.AddAsync(restaurant);
             await _db.SaveChangesAsync();
 

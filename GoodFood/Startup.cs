@@ -79,6 +79,8 @@ namespace GoodFood
             services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
             services.AddScoped <RequestTimeMiddleware>();
             services.AddScoped<IDishService, DishService>();
+            services.AddScoped<IUserContextService, UserContextService>();
+            services.AddHttpContextAccessor();
             services.AddScoped<IAccountService, AccountService>();
         }
 
