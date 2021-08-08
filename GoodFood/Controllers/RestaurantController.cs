@@ -52,9 +52,9 @@ namespace GoodFood.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<RestaurantDto>>> GetAll([FromQuery] string searchPhrase)
+        public async Task<ActionResult<IEnumerable<RestaurantDto>>> GetAll([FromQuery] RestaurantQuery query)
         {
-            var restaurantDtos = await _restaurantService.GetAllAsync(searchPhrase);
+            var restaurantDtos = await _restaurantService.GetAllAsync(query);
 
             return Ok(restaurantDtos);
         }

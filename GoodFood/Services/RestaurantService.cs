@@ -100,18 +100,27 @@ namespace GoodFood.Services
             return result;
         }
 
-        public async Task<IEnumerable<RestaurantDto>> GetAllAsync(string searchPhrase)
+        public async Task<RestaurantPagedResult<RestaurantDto>> GetAllAsync(RestaurantQuery query)
         {
-            var restaurants = await _db
+            var baseQuery = _db
                 .Restaurants
                 .Include(r => r.Address)
                 .Include(r => r.Dishes)
-                .Where(r => searchPhrase == null || (r.Name.ToLower().Contains(searchPhrase)))
+                .Where(r => query.SearchPhrase == null || (r.Name.ToLower().Contains(query.SearchPhrase.ToLower())
+                                                       || r.Description.ToLower().Contains(query.SearchPhrase.ToLower())));
+
+            var restaurants = await baseQuery
+                .Skip(query.PageSize * (query.PageNumber - 1))
+                .Take(query.PageSize)
                 .ToListAsync();
+
+            var totalItemsCount = baseQuery.Count();
 
             var restaurantsDtos = _mapper.Map<List<RestaurantDto>>(restaurants);
 
-            return restaurantsDtos;
+            var result = new RestaurantPagedResult<RestaurantDto>(restaurantsDtos,totalItemsCount, query.PageSize, query.PageNumber);
+
+            return result;
         }
 
         public async Task<int> CreateAsync(CreateRestaurantDto dto)
