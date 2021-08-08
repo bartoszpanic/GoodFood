@@ -100,12 +100,13 @@ namespace GoodFood.Services
             return result;
         }
 
-        public async Task<IEnumerable<RestaurantDto>> GetAllAsync()
+        public async Task<IEnumerable<RestaurantDto>> GetAllAsync(string searchPhrase)
         {
             var restaurants = await _db
                 .Restaurants
                 .Include(r => r.Address)
                 .Include(r => r.Dishes)
+                .Where(r => searchPhrase == null || (r.Name.ToLower().Contains(searchPhrase)))
                 .ToListAsync();
 
             var restaurantsDtos = _mapper.Map<List<RestaurantDto>>(restaurants);
