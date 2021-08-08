@@ -77,6 +77,7 @@ namespace GoodFood
             services.AddAutoMapper(this.GetType().Assembly);
             services.AddSwaggerGen();
             services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
+            services.AddScoped<IValidator<RestaurantQuery>, RestaurantQueryValidator>();
             services.AddScoped <RequestTimeMiddleware>();
             services.AddScoped<IDishService, DishService>();
             services.AddScoped<IUserContextService, UserContextService>();
